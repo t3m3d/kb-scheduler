@@ -217,49 +217,68 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ===============================
-  // FORM SUBMISSION
+  // PAYMENT‑AWARE FORM SUBMISSION
   // ===============================
   const form = document.getElementById("kbSchedulerForm");
   if (form) {
-    form.addEventListener("submit", function(e) {
+    form.addEventListener("submit", async function(e) {
       e.preventDefault();
 
       const status = document.getElementById("schedulerStatus");
+      const paymentMethod = document.getElementById("paymentType")?.value;
 
-      const formData = new FormData();
-      formData.append("action", "kb_save_appointment");
-      formData.append("service_type", document.getElementById("serviceType").value);
-      formData.append("service_method", document.getElementById("serviceMethod").value);
-      formData.append("appointment_date", document.getElementById("appointmentDate").value);
-      formData.append("appointment_time", document.getElementById("appointmentTime").value);
-
-      // NEW FIELDS
-      formData.append("client_name", document.getElementById("clientName")?.value || "");
-      formData.append("client_email", document.getElementById("clientEmail")?.value || "");
-      formData.append("client_address", document.getElementById("clientAddress")?.value || "");
-
-      fetch(kb_ajax.ajax_url, {
-        method: "POST",
-        body: formData
-      })
-      .then(res => res.json())
-      .then(data => {
-        if (!status) return;
-        if (data.success) {
-          status.textContent = "Appointment booked successfully!";
-          status.style.color = "green";
-        } else {
-          status.textContent = "Error: " + data.message;
+      if (!paymentMethod) {
+        if (status) {
+          status.textContent = "Please select a payment method.";
           status.style.color = "red";
         }
-      })
-      .catch(err => {
+        return;
+      }
+
+      // Collect form data to send to backend
+      const payload = {
+        action: "kb_create_payment",
+        service_type: document.getElementById("serviceType").value,
+        service_method: document.getElementById("serviceMethod").value,
+        appointment_date: document.getElementById("appointmentDate").value,
+        appointment_time: document.getElementById("appointmentTime").value,
+        client_name: document.getElementById("clientName").value,
+        client_email: document.getElementById("clientEmail").value,
+        client_address: document.getElementById("clientAddress").value,
+        payment_method: paymentMethod
+      };
+
+      if (status) {
+        status.textContent = "Redirecting to secure payment...";
+        status.style.color = "blue";
+      }
+
+      try {
+        const response = await fetch(kb_ajax.ajax_url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        const result = await response.json();
+
+        if (!result.success) {
+          if (status) {
+            status.textContent = "Error: " + result.message;
+            status.style.color = "red";
+          }
+          return;
+        }
+
+        // Redirect user to Stripe or PayPal
+        window.location.href = result.redirect_url;
+      } catch (err) {
         console.error(err);
         if (status) {
-          status.textContent = "Unexpected error.";
+          status.textContent = "Unexpected error while creating payment.";
           status.style.color = "red";
         }
-      });
+      }
     });
   }
 });

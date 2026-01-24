@@ -29,6 +29,14 @@
     <!-- Price -->
     <p id="priceDisplay">Price: $0/hr</p>
 
+    <!-- Payment Method -->
+    <label for="paymentType">Payment Method</label>
+    <select id="paymentType" name="payment_method" required>
+      <option value="">Select a payment method</option>
+      <option value="stripe">Credit/Debit Card (Stripe)</option>
+      <option value="paypal">PayPal</option>
+    </select>
+
     <label for="clientName">Your Name</label>
     <input type="text" id="clientName" name="clientName" required>
 

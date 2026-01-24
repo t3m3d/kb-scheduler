@@ -2,7 +2,7 @@
 /*
 Plugin Name: KB Scheduler
 Description: Custom scheduling system for technical support and consulting.
-Version: 1.4
+Version: 1.5
 */
 
 // ===============================
@@ -83,6 +83,8 @@ function kb_scheduler_create_table() {
         `service_method` varchar(50) NOT NULL,
         `appointment_date` date NOT NULL,
         `appointment_time` varchar(20) NOT NULL,
+        `payment_method` varchar(20) DEFAULT NULL,
+        `payment_status` varchar(20) DEFAULT 'pending',
         `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
         PRIMARY KEY (`id`),
         KEY `appointment_date` (`appointment_date`)
@@ -92,52 +94,6 @@ function kb_scheduler_create_table() {
     dbDelta($sql);
 }
 register_activation_hook(__FILE__, 'kb_scheduler_create_table');
-
-
-// ===============================
-// AJAX HANDLER — SAVE APPOINTMENT
-// ===============================
-add_action('wp_ajax_kb_save_appointment', 'kb_save_appointment');
-add_action('wp_ajax_nopriv_kb_save_appointment', 'kb_save_appointment');
-
-function kb_save_appointment() {
-    global $wpdb;
-
-    $table = $wpdb->prefix . 'kb_appointments';
-
-    // Required fields
-    $service_type   = isset($_POST['service_type']) ? sanitize_text_field($_POST['service_type']) : '';
-    $service_method = isset($_POST['service_method']) ? sanitize_text_field($_POST['service_method']) : '';
-    $date           = isset($_POST['appointment_date']) ? sanitize_text_field($_POST['appointment_date']) : '';
-    $time           = isset($_POST['appointment_time']) ? sanitize_text_field($_POST['appointment_time']) : '';
-
-    // Match HTML field names exactly
-    $client_name    = isset($_POST['clientName']) ? sanitize_text_field($_POST['clientName']) : '';
-    $client_email   = isset($_POST['clientEmail']) ? sanitize_email($_POST['clientEmail']) : '';
-    $client_address = isset($_POST['clientAddress']) ? sanitize_textarea_field($_POST['clientAddress']) : '';
-
-    // Validate required fields
-    if (!$service_type || !$service_method || !$date || !$time || !$client_name || !$client_email) {
-        wp_send_json(array(
-            'success' => false,
-            'message' => 'Missing required fields.'
-        ));
-    }
-
-    // Insert into DB
-    $wpdb->insert($table, array(
-        'client_name'      => $client_name,
-        'client_email'     => $client_email,
-        'client_address'   => $client_address,
-        'service_type'     => $service_type,
-        'service_method'   => $service_method,
-        'appointment_date' => $date,
-        'appointment_time' => $time,
-        'created_at'       => current_time('mysql')
-    ));
-
-    wp_send_json(array('success' => true));
-}
 
 
 // ===============================
@@ -164,4 +120,156 @@ function kb_get_booked_times() {
     );
 
     wp_send_json($results);
+}
+
+
+// ===============================
+// STEP 3 — AJAX HANDLER: CREATE PAYMENT SESSION
+// ===============================
+add_action("wp_ajax_kb_create_payment", "kb_create_payment");
+add_action("wp_ajax_nopriv_kb_create_payment", "kb_create_payment");
+
+function kb_create_payment() {
+
+    $input = json_decode(file_get_contents("php://input"), true);
+
+    if (!$input) {
+        wp_send_json([ "success" => false, "message" => "Invalid request." ]);
+    }
+
+    $service_type   = sanitize_text_field($input["service_type"]);
+    $service_method = sanitize_text_field($input["service_method"]);
+    $date           = sanitize_text_field($input["appointment_date"]);
+    $time           = sanitize_text_field($input["appointment_time"]);
+    $name           = sanitize_text_field($input["client_name"]);
+    $email          = sanitize_email($input["client_email"]);
+    $address        = sanitize_text_field($input["client_address"]);
+    $payment_method = sanitize_text_field($input["payment_method"]);
+
+    // ============================
+    // PRICE CALCULATION
+    // ============================
+    $base_prices = [
+        "tech"    => 30,
+        "consult" => 55
+    ];
+
+    $method_addons = [
+        "phone"     => 10,
+        "housecall" => 30,
+        "office"    => 0
+    ];
+
+    $price = ($base_prices[$service_type] ?? 0) + ($method_addons[$service_method] ?? 0);
+    $amount_cents = $price * 100;
+
+    // ============================
+    // STRIPE PAYMENT FLOW
+    // ============================
+    if ($payment_method === "stripe") {
+
+        require_once __DIR__ . "/stripe/init.php";
+        \Stripe\Stripe::setApiKey("YOUR_STRIPE_SECRET_KEY");
+
+        try {
+            $session = \Stripe\Checkout\Session::create([
+                "payment_method_types" => ["card"],
+                "mode" => "payment",
+                "line_items" => [[
+                    "price_data" => [
+                        "currency" => "usd",
+                        "product_data" => [
+                            "name" => "Appointment – $service_type ($service_method)"
+                        ],
+                        "unit_amount" => $amount_cents
+                    ],
+                    "quantity" => 1
+                ]],
+                "success_url" => home_url("/booking-confirmed/"),
+                "cancel_url"  => home_url("/booking-cancelled/"),
+                "metadata" => [
+                    "service_type"   => $service_type,
+                    "service_method" => $service_method,
+                    "appointment_date" => $date,
+                    "appointment_time" => $time,
+                    "client_name"    => $name,
+                    "client_email"   => $email,
+                    "client_address" => $address
+                ]
+            ]);
+
+            wp_send_json([
+                "success" => true,
+                "redirect_url" => $session->url
+            ]);
+
+        } catch (Exception $e) {
+            wp_send_json([ "success" => false, "message" => $e->getMessage() ]);
+        }
+    }
+
+    // ============================
+    // PAYPAL PAYMENT FLOW
+    // ============================
+    if ($payment_method === "paypal") {
+
+        $paypal_client_id = "YOUR_PAYPAL_CLIENT_ID";
+        $paypal_secret    = "YOUR_PAYPAL_SECRET";
+
+        $auth = base64_encode("$paypal_client_id:$paypal_secret");
+
+        $token_response = wp_remote_post("https://api-m.paypal.com/v1/oauth2/token", [
+            "headers" => [
+                "Authorization" => "Basic $auth",
+                "Content-Type" => "application/x-www-form-urlencoded"
+            ],
+            "body" => "grant_type=client_credentials"
+        ]);
+
+        $token_body = json_decode(wp_remote_retrieve_body($token_response), true);
+        $access_token = $token_body["access_token"] ?? null;
+
+        if (!$access_token) {
+            wp_send_json([ "success" => false, "message" => "PayPal authentication failed." ]);
+        }
+
+        $order_response = wp_remote_post("https://api-m.paypal.com/v2/checkout/orders", [
+            "headers" => [
+                "Authorization" => "Bearer $access_token",
+                "Content-Type" => "application/json"
+            ],
+            "body" => json_encode([
+                "intent" => "CAPTURE",
+                "purchase_units" => [[
+                    "amount" => [
+                        "currency_code" => "USD",
+                        "value" => $price
+                    ]
+                ]],
+                "application_context" => [
+                    "return_url" => home_url("/booking-confirmed/"),
+                    "cancel_url" => home_url("/booking-cancelled/")
+                ]
+            ])
+        ]);
+
+        $order_body = json_decode(wp_remote_retrieve_body($order_response), true);
+
+        if (!isset($order_body["links"])) {
+            wp_send_json([ "success" => false, "message" => "PayPal order creation failed." ]);
+        }
+
+        foreach ($order_body["links"] as $link) {
+            if ($link["rel"] === "approve") {
+                wp_send_json([
+                    "success" => true,
+                    "redirect_url" => $link["href"]
+                ]);
+            }
+        }
+
+        wp_send_json([ "success" => false, "message" => "PayPal approval link not found." ]);
+    }
+
+    wp_send_json([ "success" => false, "message" => "Invalid payment method." ]);
 }
