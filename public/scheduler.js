@@ -141,7 +141,6 @@ function blockTimes(bookedTimes) {
 
   const options = Array.from(timeSelect.options);
 
-  // Reset all options
   options.forEach(opt => opt.disabled = false);
 
   bookedTimes.forEach(time => {
@@ -150,13 +149,8 @@ function blockTimes(bookedTimes) {
     options.forEach(opt => {
       const current = convertToMinutes(opt.value);
 
-      // Block exact time
       if (opt.value === time) opt.disabled = true;
-
-      // Block 1 hour before
       if (current >= booked - 60 && current < booked) opt.disabled = true;
-
-      // Block 2 hours after
       if (current > booked && current <= booked + 120) opt.disabled = true;
     });
   });
@@ -184,9 +178,6 @@ document.addEventListener("DOMContentLoaded", () => {
   if (methodSelect) {
     methodSelect.addEventListener("change", updatePrice);
 
-    // ===============================
-    // AUTO-SHOW ADDRESS FIELD FOR HOUSECALL
-    // ===============================
     methodSelect.addEventListener("change", () => {
       const addressField = document.getElementById("clientAddress");
       const addressLabel = document.getElementById("addressLabel");
@@ -205,7 +196,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Fetch booked times when date changes
   if (dateInput) {
     dateInput.addEventListener("change", async () => {
       const date = dateInput.value;
@@ -217,7 +207,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ===============================
-  // PAYMENT‑AWARE FORM SUBMISSION
+  // SIMPLE FORM SUBMISSION (NO PAYMENT)
   // ===============================
   const form = document.getElementById("kbSchedulerForm");
   if (form) {
@@ -225,17 +215,7 @@ document.addEventListener("DOMContentLoaded", () => {
       e.preventDefault();
 
       const status = document.getElementById("schedulerStatus");
-      const paymentMethod = document.getElementById("paymentType")?.value;
 
-      if (!paymentMethod) {
-        if (status) {
-          status.textContent = "Please select a payment method.";
-          status.style.color = "red";
-        }
-        return;
-      }
-
-      // Collect form data to send to backend
       const payload = {
         action: "kb_create_payment",
         service_type: document.getElementById("serviceType").value,
@@ -244,12 +224,11 @@ document.addEventListener("DOMContentLoaded", () => {
         appointment_time: document.getElementById("appointmentTime").value,
         client_name: document.getElementById("clientName").value,
         client_email: document.getElementById("clientEmail").value,
-        client_address: document.getElementById("clientAddress").value,
-        payment_method: paymentMethod
+        client_address: document.getElementById("clientAddress").value
       };
 
       if (status) {
-        status.textContent = "Redirecting to secure payment...";
+        status.textContent = "Booking appointment...";
         status.style.color = "blue";
       }
 
@@ -270,12 +249,15 @@ document.addEventListener("DOMContentLoaded", () => {
           return;
         }
 
-        // Redirect user to Stripe or PayPal
-        window.location.href = result.redirect_url;
+        if (status) {
+          status.textContent = "Appointment booked successfully.";
+          status.style.color = "green";
+        }
+
       } catch (err) {
         console.error(err);
         if (status) {
-          status.textContent = "Unexpected error while creating payment.";
+          status.textContent = "Unexpected error while booking appointment.";
           status.style.color = "red";
         }
       }

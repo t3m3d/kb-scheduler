@@ -15,12 +15,10 @@
     <select id="serviceMethod" name="service_method">
       <option value="phone">Over the Phone</option>
       <option value="housecall">Housecall</option>
-      <option value="bring">Bring In Office</option>
+      <option value="office">Bring In Office</option>
     </select>
 
-    <!-- Date -->
-    <label>Select Date</label>
-    <input type="date" id="appointmentDate" name="appointment_date">
+      <input type="date" id="appointmentDate" name="appointment_date">
 
     <!-- Time -->
     <label>Select Time</label>
@@ -29,20 +27,15 @@
     <!-- Price -->
     <p id="priceDisplay">Price: $0/hr</p>
 
-    <!-- Payment Method -->
-    <label for="paymentType">Payment Method</label>
-    <select id="paymentType" name="payment_method" required>
-      <option value="">Select a payment method</option>
-      <option value="stripe">Credit/Debit Card (Stripe)</option>
-      <option value="paypal">PayPal</option>
-    </select>
-
+    <!-- Name -->
     <label for="clientName">Your Name</label>
     <input type="text" id="clientName" name="clientName" required>
 
+    <!-- Email -->
     <label for="clientEmail">Email Address</label>
     <input type="email" id="clientEmail" name="clientEmail" required>
 
+    <!-- Address (Housecall Only) -->
     <label for="clientAddress" id="addressLabel" style="display:none;">Your Address (Housecall Only)</label>
     <textarea id="clientAddress" name="clientAddress" style="display:none;"></textarea>
 

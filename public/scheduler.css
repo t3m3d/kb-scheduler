@@ -3,120 +3,182 @@
   max-width: 400px;
   margin: 20px auto;
   padding: 15px;
-  border: 1px solid #ccc;
+  border: 1px solid #333;
   border-radius: 8px;
-  background: #111; /* collective bg */
+  background: #111;
   font-family: Arial, sans-serif;
+  color: #eee;
 }
 
 /* Title */
 #kb-scheduler h2 {
   margin-bottom: 15px;
   text-align: center;
+  color: #fff;
 }
 
 /* Labels */
 #kb-scheduler label {
   display: block;
-  margin-top: 10px;
+  margin-top: 12px;
   font-weight: bold;
+  color: #ddd;
 }
 
-/* Select fields */
-#kb-scheduler select {
+/* Select + Input fields */
+#kb-scheduler select,
+#kb-scheduler input,
+#kb-scheduler textarea {
   width: 100%;
-  padding: 8px;
-  margin-top: 5px;
-  border-radius: 4px;
-  border: 1px solid #ffffff;
+  padding: 10px;
+  margin-top: 6px;
+  border-radius: 6px;
+  border: 1px solid #444;
   background: #1e1e1e;
   color: #eee;
+  box-sizing: border-box;
 }
 
-/* Input fields */
-#kb-scheduler input {
-  width: 100%;
-  padding: 8px;
-  margin-top: 5px;
-  border-radius: 4px;
-  border: 1px solid #ffffff;
-  background: #1e1e1e;
-  color: #eee;
+/* Textarea */
+#kb-scheduler textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+/* Price display */
+#priceDisplay {
+  margin-top: 15px;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  color: #fff;
 }
 
 /* Button */
 #kb-scheduler button {
   width: 100%;
-  padding: 8px;
-  margin-top: 15px;
-  border-radius: 4px;
-  border: 1px solid #ffffff;
-  background: #1e1e1e; /* button before hover */
-  color: #fff;         /* button text color */
+  padding: 12px;
+  margin-top: 20px;
+  border-radius: 6px;
+  border: 1px solid #666;
+  background: #222;
+  color: #fff;
   font-weight: bold;
   cursor: pointer;
+  transition: background 0.2s ease;
 }
 
 /* Button hover */
 #kb-scheduler button:hover {
-  background: #000000; /* button hovering */
-  color: #fff;         /* optional hover text color */
+  background: #000;
 }
 
-/* Price display */
-#priceDisplay {
-  margin-top: 10px;
-  font-size: 16px;
-  font-weight: bold;
-  text-align: center;
-}
-
-/* Date input (if you want it separate) */
-#appointmentDate {
-  width: 100% !important;
-  box-sizing:border-box;
-  background: #1e1e1e; /* select date dropdown */
-  color: #eee;
-  border: 1px solid #444;
-  padding: 8px;
-  border-radius: 4px;
-}
-
-#appointmentTime {
-  background: #1e1e1e;
-  color: #eee;
-  border: 1px solid #444;
-  padding: 8px;
-  border-radius: 4px;
-}
-
-#clientName,
-#clientEmail,
-#clientAddress {
-  width: 100%;
-  box-sizing: border-box;
-  margin-bottom: 20px;
-  border-radius: 6px;
-}
-
-/* Individual styling preserved */
+/* Individual field styling */
 #clientName {
   background: #111;
-  color: #eee;
-  padding: 20px;
   border: 1px solid #333;
 }
 
 #clientEmail {
   background: #181818;
-  color: #ddd;
-  padding: 20px;
   border: 1px solid #444;
 }
 
 #clientAddress {
   background: #1e1e1e;
-  color: #ccc;
-  padding: 20px;
   border: 1px solid #555;
+  color: #ccc;
+}
+
+/* Date input override */
+#appointmentDate {
+  background: #1e1e1e;
+  border: 1px solid #444;
+  color: #eee;
+}
+
+/* Time dropdown */
+#appointmentTime {
+  background: #1e1e1e;
+  border: 1px solid #444;
+  color: #eee;
+}
+
+/* ===============================
+   FLATPICKR DARK THEME OVERRIDES
+   =============================== */
+
+.flatpickr-calendar {
+  background: #111 !important;
+  border: 1px solid #333 !important;
+  color: #eee !important;
+  box-shadow: 0 0 12px rgba(0, 255, 255, 0.15) !important;
+  transition: box-shadow 0.3s ease, opacity 0.3s ease;
+  opacity: 0;
+}
+
+.flatpickr-calendar.open {
+  opacity: 1;
+}
+
+.flatpickr-months {
+  background: #111 !important;
+  border-bottom: 1px solid #333 !important;
+}
+
+.flatpickr-months .flatpickr-month {
+  color: #eee !important;
+}
+
+.flatpickr-weekdays {
+  background: #111 !important;
+}
+
+.flatpickr-weekday {
+  color: #aaa !important;
+}
+
+.flatpickr-day {
+  background: #1a1a1a !important;
+  color: #eee !important;
+  border-radius: 4px !important;
+}
+
+.flatpickr-day:hover {
+  background: #333 !important;
+  color: #fff !important;
+}
+
+.flatpickr-day.today {
+  background: #222 !important;
+  border: 1px solid #555 !important;
+  color: #fff !important;
+}
+
+.flatpickr-day.selected {
+  background: #005f8d !important;
+  color: #fff !important;
+  border: 1px solid #0077aa !important;
+  box-shadow: inset 0 0 6px rgba(0, 255, 255, 0.3) !important;
+}
+
+.flatpickr-time input {
+  background: #1e1e1e !important;
+  color: #eee !important;
+  border: 1px solid #444 !important;
+}
+
+.flatpickr-time .flatpickr-time-separator,
+.flatpickr-time .flatpickr-am-pm {
+  color: #ccc !important;
+}
+
+/* Make Flatpickr popup match the input width without wrapper */
+.flatpickr-calendar {
+  width: 100% !important;
+  max-width: 400px !important; /* matches your scheduler width */
+  left: 0 !important;
+  right: 0 !important;
+  margin: 0 auto !important;
+  position: absolute !important;
 }
