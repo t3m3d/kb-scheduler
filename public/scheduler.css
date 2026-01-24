@@ -1,0 +1,122 @@
+/* Scheduler container */
+#kb-scheduler {
+  max-width: 400px;
+  margin: 20px auto;
+  padding: 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background: #111; /* collective bg */
+  font-family: Arial, sans-serif;
+}
+
+/* Title */
+#kb-scheduler h2 {
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+/* Labels */
+#kb-scheduler label {
+  display: block;
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+/* Select fields */
+#kb-scheduler select {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border-radius: 4px;
+  border: 1px solid #ffffff;
+  background: #1e1e1e;
+  color: #eee;
+}
+
+/* Input fields */
+#kb-scheduler input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border-radius: 4px;
+  border: 1px solid #ffffff;
+  background: #1e1e1e;
+  color: #eee;
+}
+
+/* Button */
+#kb-scheduler button {
+  width: 100%;
+  padding: 8px;
+  margin-top: 15px;
+  border-radius: 4px;
+  border: 1px solid #ffffff;
+  background: #1e1e1e; /* button before hover */
+  color: #fff;         /* button text color */
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* Button hover */
+#kb-scheduler button:hover {
+  background: #000000; /* button hovering */
+  color: #fff;         /* optional hover text color */
+}
+
+/* Price display */
+#priceDisplay {
+  margin-top: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+}
+
+/* Date input (if you want it separate) */
+#appointmentDate {
+  width: 100% !important;
+  box-sizing:border-box;
+  background: #1e1e1e; /* select date dropdown */
+  color: #eee;
+  border: 1px solid #444;
+  padding: 8px;
+  border-radius: 4px;
+}
+
+#appointmentTime {
+  background: #1e1e1e;
+  color: #eee;
+  border: 1px solid #444;
+  padding: 8px;
+  border-radius: 4px;
+}
+
+#clientName,
+#clientEmail,
+#clientAddress {
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 20px;
+  border-radius: 6px;
+}
+
+/* Individual styling preserved */
+#clientName {
+  background: #111;
+  color: #eee;
+  padding: 20px;
+  border: 1px solid #333;
+}
+
+#clientEmail {
+  background: #181818;
+  color: #ddd;
+  padding: 20px;
+  border: 1px solid #444;
+}
+
+#clientAddress {
+  background: #1e1e1e;
+  color: #ccc;
+  padding: 20px;
+  border: 1px solid #555;
+}
