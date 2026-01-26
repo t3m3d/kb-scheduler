@@ -3,14 +3,12 @@
 
   <form id="kbSchedulerForm">
 
-    <!-- Service Type -->
     <label>Service Type</label>
     <select id="serviceType" name="service_type">
-      <option value="tech">Technical Support – $30/hr</option>
-      <option value="consult">Consulting – $55/hr</option>
+      <option value="tech">Technical Support - $30/hr</option>
+      <option value="consult">Consulting - $55/hr</option>
     </select>
 
-    <!-- Service Method -->
     <label>Service Method</label>
     <select id="serviceMethod" name="service_method">
       <option value="phone">Over the Phone</option>
@@ -18,28 +16,23 @@
       <option value="office">Bring In Office</option>
     </select>
 
-      <input type="date" id="appointmentDate" name="appointment_date">
+    <label for="appointmentDate">Select Date</label>
+    <input type="date" id="appointmentDate" name="appointment_date">
 
-    <!-- Time -->
     <label>Select Time</label>
     <select id="appointmentTime" name="appointment_time"></select>
 
-    <!-- Price -->
     <p id="priceDisplay">Price: $0/hr</p>
 
-    <!-- Name -->
     <label for="clientName">Your Name</label>
     <input type="text" id="clientName" name="clientName" required>
 
-    <!-- Email -->
     <label for="clientEmail">Email Address</label>
     <input type="email" id="clientEmail" name="clientEmail" required>
 
-    <!-- Address (Housecall Only) -->
     <label for="clientAddress" id="addressLabel" style="display:none;">Your Address (Housecall Only)</label>
     <textarea id="clientAddress" name="clientAddress" style="display:none;"></textarea>
 
-    <!-- Book -->
     <button type="submit" id="bookNow">Book Appointment</button>
 
   </form>

@@ -1,6 +1,3 @@
-// ===============================
-// PRICING TABLES
-// ===============================
 const basePricing = {
   tech: 30,
   consult: 50
@@ -12,9 +9,6 @@ const methodAddons = {
   office: 0
 };
 
-// ===============================
-// FLATPICKR DATE PICKER
-// ===============================
 flatpickr("#appointmentDate", {
   dateFormat: "m/d/Y",
   minDate: "today",
@@ -25,9 +19,6 @@ flatpickr("#appointmentDate", {
   ]
 });
 
-// ===============================
-// TIME SLOT POPULATION
-// ===============================
 function populateTimeSlots() {
   const timeSelect = document.getElementById("appointmentTime");
   if (!timeSelect) return;
@@ -69,9 +60,6 @@ function populateTimeSlots() {
   timeSelect.appendChild(lastOpt);
 }
 
-// ===============================
-// SERVICE METHOD LABELS
-// ===============================
 function updateMethodLabels() {
   const serviceSelect = document.getElementById("serviceType");
   const methodSelect = document.getElementById("serviceMethod");
@@ -95,9 +83,6 @@ function updateMethodLabels() {
   });
 }
 
-// ===============================
-// PRICE UPDATE
-// ===============================
 function updatePrice() {
   const serviceSelect = document.getElementById("serviceType");
   const methodSelect = document.getElementById("serviceMethod");
@@ -110,18 +95,12 @@ function updatePrice() {
   priceDisplay.textContent = `Price: $${base + addon}/hr`;
 }
 
-// ===============================
-// FETCH BOOKED TIMES FROM SERVER
-// ===============================
 async function fetchBookedTimes(date) {
   const url = kb_ajax.ajax_url + "?action=kb_get_booked_times&date=" + encodeURIComponent(date);
   const response = await fetch(url);
   return await response.json();
 }
 
-// ===============================
-// TIME STRING → MINUTES
-// ===============================
 function convertToMinutes(timeStr) {
   const [time, modifier] = timeStr.split(" ");
   let [hours, minutes] = time.split(":").map(Number);
@@ -132,9 +111,6 @@ function convertToMinutes(timeStr) {
   return hours * 60 + minutes;
 }
 
-// ===============================
-// BLOCK TIMES (booked + 1hr before + 2hr after)
-// ===============================
 function blockTimes(bookedTimes) {
   const timeSelect = document.getElementById("appointmentTime");
   if (!timeSelect) return;
@@ -156,9 +132,6 @@ function blockTimes(bookedTimes) {
   });
 }
 
-// ===============================
-// DOM READY
-// ===============================
 document.addEventListener("DOMContentLoaded", () => {
   populateTimeSlots();
   updateMethodLabels();
@@ -206,9 +179,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // ===============================
-  // SIMPLE FORM SUBMISSION (NO PAYMENT)
-  // ===============================
   const form = document.getElementById("kbSchedulerForm");
   if (form) {
     form.addEventListener("submit", async function(e) {

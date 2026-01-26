@@ -5,9 +5,6 @@ Description: Custom scheduling system for technical support and consulting.
 Version: 1.5
 */
 
-// ===============================
-// SHORTCODE
-// ===============================
 function kb_scheduler_shortcode() {
     ob_start();
     include plugin_dir_path(__FILE__) . 'public/scheduler.html';
@@ -16,12 +13,8 @@ function kb_scheduler_shortcode() {
 add_shortcode('kb_scheduler', 'kb_scheduler_shortcode');
 
 
-// ===============================
-// ASSETS (CSS + JS + AJAX URL)
-// ===============================
 function kb_scheduler_assets() {
 
-    // Flatpickr CSS
     wp_enqueue_style(
         'flatpickr-css',
         'https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css',
@@ -29,7 +22,6 @@ function kb_scheduler_assets() {
         null
     );
 
-    // Flatpickr JS (correct file)
     wp_enqueue_script(
         'flatpickr-js',
         'https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.js',
@@ -38,7 +30,6 @@ function kb_scheduler_assets() {
         true
     );
 
-    // Scheduler CSS
     wp_enqueue_style(
         'kb-scheduler-css',
         plugin_dir_url(__FILE__) . 'public/scheduler.css',
@@ -46,7 +37,6 @@ function kb_scheduler_assets() {
         null
     );
 
-    // Scheduler JS (depends on Flatpickr)
     wp_enqueue_script(
         'kb-scheduler-js',
         plugin_dir_url(__FILE__) . 'public/scheduler.js',
@@ -64,9 +54,6 @@ function kb_scheduler_assets() {
 add_action('wp_enqueue_scripts', 'kb_scheduler_assets');
 
 
-// ===============================
-// DATABASE TABLE ON ACTIVATION
-// ===============================
 function kb_scheduler_create_table() {
     global $wpdb;
 
@@ -95,9 +82,6 @@ function kb_scheduler_create_table() {
 register_activation_hook(__FILE__, 'kb_scheduler_create_table');
 
 
-// ===============================
-// AJAX HANDLER — GET BOOKED TIMES
-// ===============================
 add_action('wp_ajax_kb_get_booked_times', 'kb_get_booked_times');
 add_action('wp_ajax_nopriv_kb_get_booked_times', 'kb_get_booked_times');
 
@@ -121,10 +105,6 @@ function kb_get_booked_times() {
     wp_send_json($results);
 }
 
-
-// ===============================
-// AJAX HANDLER — CREATE APPOINTMENT (PAYMENT BYPASSED)
-// ===============================
 add_action('wp_ajax_kb_create_payment', 'kb_create_payment');
 add_action('wp_ajax_nopriv_kb_create_payment', 'kb_create_payment');
 
@@ -147,7 +127,6 @@ function kb_create_payment() {
     $email          = sanitize_email($input["client_email"] ?? '');
     $address        = sanitize_text_field($input["client_address"] ?? '');
 
-    // Basic validation
     if (!$service_type || !$service_method || !$date || !$time || !$name || !$email) {
         wp_send_json([
             "success" => false,
@@ -155,7 +134,6 @@ function kb_create_payment() {
         ]);
     }
 
-    // PRICE CALCULATION
     $base_prices = [
         "tech"    => 30,
         "consult" => 55
@@ -169,7 +147,6 @@ function kb_create_payment() {
 
     $price = ($base_prices[$service_type] ?? 0) + ($method_addons[$service_method] ?? 0);
 
-    // BYPASS PAYMENT — DIRECT APPOINTMENT INSERT
     global $wpdb;
     $table = $wpdb->prefix . 'kb_appointments';
 

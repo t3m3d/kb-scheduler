@@ -1,4 +1,3 @@
-/* Scheduler container */
 #kb-scheduler {
   max-width: 400px;
   margin: 20px auto;
@@ -10,14 +9,12 @@
   color: #eee;
 }
 
-/* Title */
 #kb-scheduler h2 {
   margin-bottom: 15px;
   text-align: center;
   color: #fff;
 }
 
-/* Labels */
 #kb-scheduler label {
   display: block;
   margin-top: 12px;
@@ -25,7 +22,6 @@
   color: #ddd;
 }
 
-/* Select + Input fields */
 #kb-scheduler select,
 #kb-scheduler input,
 #kb-scheduler textarea {
@@ -39,13 +35,11 @@
   box-sizing: border-box;
 }
 
-/* Textarea */
 #kb-scheduler textarea {
   min-height: 80px;
   resize: vertical;
 }
 
-/* Price display */
 #priceDisplay {
   margin-top: 15px;
   font-size: 16px;
@@ -54,7 +48,6 @@
   color: #fff;
 }
 
-/* Button */
 #kb-scheduler button {
   width: 100%;
   padding: 12px;
@@ -68,12 +61,17 @@
   transition: background 0.2s ease;
 }
 
-/* Button hover */
 #kb-scheduler button:hover {
   background: #000;
 }
 
-/* Individual field styling */
+.scheduler-label {
+  color: #fff;
+  font-weight: 600;
+  margin-bottom: 4px;
+  display: block;
+}
+
 #clientName {
   background: #111;
   border: 1px solid #333;
@@ -90,23 +88,17 @@
   color: #ccc;
 }
 
-/* Date input override */
 #appointmentDate {
   background: #1e1e1e;
   border: 1px solid #444;
   color: #eee;
 }
 
-/* Time dropdown */
 #appointmentTime {
   background: #1e1e1e;
   border: 1px solid #444;
   color: #eee;
 }
-
-/* ===============================
-   FLATPICKR DARK THEME OVERRIDES
-   =============================== */
 
 .flatpickr-calendar {
   background: #111 !important;
@@ -173,10 +165,9 @@
   color: #ccc !important;
 }
 
-/* Make Flatpickr popup match the input width without wrapper */
 .flatpickr-calendar {
   width: 100% !important;
-  max-width: 400px !important; /* matches your scheduler width */
+  max-width: 400px !important;
   left: 0 !important;
   right: 0 !important;
   margin: 0 auto !important;
