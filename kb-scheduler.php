@@ -15,6 +15,7 @@ add_shortcode('kb_scheduler', 'kb_scheduler_shortcode');
 
 function kb_scheduler_assets() {
 
+    // Flatpickr CSS
     wp_enqueue_style(
         'flatpickr-css',
         'https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css',
@@ -22,6 +23,7 @@ function kb_scheduler_assets() {
         null
     );
 
+    // Flatpickr JS
     wp_enqueue_script(
         'flatpickr-js',
         'https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.js',
@@ -30,6 +32,7 @@ function kb_scheduler_assets() {
         true
     );
 
+    // Scheduler CSS
     wp_enqueue_style(
         'kb-scheduler-css',
         plugin_dir_url(__FILE__) . 'public/scheduler.css',
@@ -37,6 +40,7 @@ function kb_scheduler_assets() {
         null
     );
 
+    // Scheduler JS
     wp_enqueue_script(
         'kb-scheduler-js',
         plugin_dir_url(__FILE__) . 'public/scheduler.js',
@@ -105,6 +109,7 @@ function kb_get_booked_times() {
     wp_send_json($results);
 }
 
+
 add_action('wp_ajax_kb_create_payment', 'kb_create_payment');
 add_action('wp_ajax_nopriv_kb_create_payment', 'kb_create_payment');
 
@@ -150,7 +155,7 @@ function kb_create_payment() {
     global $wpdb;
     $table = $wpdb->prefix . 'kb_appointments';
 
-    $wpdb->insert($table, array(
+    $inserted = $wpdb->insert($table, array(
         'client_name'      => $name,
         'client_email'     => $email,
         'client_address'   => $address,
@@ -162,6 +167,13 @@ function kb_create_payment() {
         'payment_status'   => 'bypassed',
         'created_at'       => current_time('mysql')
     ));
+
+    if (!$inserted) {
+        wp_send_json([
+            "success" => false,
+            "message" => "Database insert failed: " . $wpdb->last_error
+        ]);
+    }
 
     wp_send_json([
         "success" => true,

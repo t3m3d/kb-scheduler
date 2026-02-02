@@ -179,6 +179,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // SIMPLE FORM SUBMISSION (NO PAYMENT)
   const form = document.getElementById("kbSchedulerForm");
   if (form) {
     form.addEventListener("submit", async function(e) {
@@ -211,9 +212,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const result = await response.json();
 
+        // 🔥 FIX: Guarantee readable error message
         if (!result.success) {
+          const msg = result.message || "An unknown error occurred.";
           if (status) {
-            status.textContent = "Error: " + result.message;
+            status.textContent = "Error: " + msg;
             status.style.color = "red";
           }
           return;
@@ -225,7 +228,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
       } catch (err) {
-        console.error(err);
+        console.error("Scheduler error:", err);
         if (status) {
           status.textContent = "Unexpected error while booking appointment.";
           status.style.color = "red";
