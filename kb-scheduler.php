@@ -15,7 +15,6 @@ add_shortcode('kb_scheduler', 'kb_scheduler_shortcode');
 
 function kb_scheduler_assets() {
 
-    // Flatpickr CSS
     wp_enqueue_style(
         'flatpickr-css',
         'https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css',
@@ -23,7 +22,6 @@ function kb_scheduler_assets() {
         null
     );
 
-    // Flatpickr JS
     wp_enqueue_script(
         'flatpickr-js',
         'https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.js',
@@ -32,7 +30,6 @@ function kb_scheduler_assets() {
         true
     );
 
-    // Scheduler CSS
     wp_enqueue_style(
         'kb-scheduler-css',
         plugin_dir_url(__FILE__) . 'public/scheduler.css',
@@ -40,7 +37,6 @@ function kb_scheduler_assets() {
         null
     );
 
-    // Scheduler JS
     wp_enqueue_script(
         'kb-scheduler-js',
         plugin_dir_url(__FILE__) . 'public/scheduler.js',
@@ -174,6 +170,22 @@ function kb_create_payment() {
             "message" => "Database insert failed: " . $wpdb->last_error
         ]);
     }
+
+    $to = get_option('admin_email'); // Your WP admin email
+    $subject = "New Appointment Booked";
+
+    $message = "A new appointment has been booked:\n\n" .
+               "Name: $name\n" .
+               "Email: $email\n" .
+               "Service: $service_type\n" .
+               "Method: $service_method\n" .
+               "Date: $date\n" .
+               "Time: $time\n" .
+               "Address: " . ($address ?: "N/A") . "\n\n" .
+               "Price: $$price\n" .
+               "Booked At: " . current_time('mysql') . "\n";
+
+    wp_mail($to, $subject, $message);
 
     wp_send_json([
         "success" => true,
